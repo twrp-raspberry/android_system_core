@@ -312,6 +312,35 @@ void SanitizePartitionName(std::string* string) {
     }
 }
 
+void create_device_symlinks(const Uevent& uevent, std::vector<std::string>& links)
+{
+    static const std::string bootdevice_path = "/proc/device-tree/firmware/android/bootdevice";
+    std::string bootdevice;
+    if (!ReadFileToString(bootdevice_path, &bootdevice)) {
+        LOG(ERROR) << "create_device_symlinks: failed to read boot device from " << bootdevice_path;
+    }
+
+    LOG(INFO) << "create_device_symlinks: device " << uevent.device_name;
+
+    if ((uevent.device_name.compare("mmcblk0p1") == 0 && bootdevice.compare(0, 6, "sdcard") == 0)
+            || (uevent.device_name.compare("sda1") == 0 && bootdevice.compare(0, 3, "usb") == 0)
+            || (uevent.device_name.compare("nvme0n1p1") == 0 && bootdevice.compare(0, 4, "nvme") == 0)) {
+        links.emplace_back("/dev/block/by-name/boot");
+    } else if ((uevent.device_name.compare("mmcblk0p2") == 0 && bootdevice.compare(0, 6, "sdcard") == 0)
+            || (uevent.device_name.compare("sda2") == 0 && bootdevice.compare(0, 3, "usb") == 0)
+            || (uevent.device_name.compare("nvme0n1p2") == 0 && bootdevice.compare(0, 4, "nvme") == 0)) {
+        links.emplace_back("/dev/block/by-name/system");
+    } else if ((uevent.device_name.compare("mmcblk0p3") == 0 && bootdevice.compare(0, 6, "sdcard") == 0)
+            || (uevent.device_name.compare("sda3") == 0 && bootdevice.compare(0, 3, "usb") == 0)
+            || (uevent.device_name.compare("nvme0n1p3") == 0 && bootdevice.compare(0, 4, "nvme") == 0)) {
+        links.emplace_back("/dev/block/by-name/vendor");
+    } else if ((uevent.device_name.compare("mmcblk0p4") == 0 && bootdevice.compare(0, 6, "sdcard") == 0)
+            || (uevent.device_name.compare("sda4") == 0 && bootdevice.compare(0, 3, "usb") == 0)
+            || (uevent.device_name.compare("nvme0n1p4") == 0 && bootdevice.compare(0, 4, "nvme") == 0)) {
+        links.emplace_back("/dev/block/by-name/userdata");
+    }
+}
+
 std::vector<std::string> DeviceHandler::GetBlockDeviceSymlinks(const Uevent& uevent) const {
     std::string device;
     std::string type;
@@ -368,6 +397,7 @@ std::vector<std::string> DeviceHandler::GetBlockDeviceSymlinks(const Uevent& uev
         // symlink of /dev/block/by-name/<device_name> for symmetry.
         links.emplace_back("/dev/block/by-name/" + uevent.device_name);
     }
+    create_device_symlinks(uevent, links);
 
     auto last_slash = uevent.path.rfind('/');
     links.emplace_back(link_path + "/" + uevent.path.substr(last_slash + 1));
