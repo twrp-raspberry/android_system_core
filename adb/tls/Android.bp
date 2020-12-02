@@ -39,7 +39,7 @@ cc_defaults {
     recovery_available: true,
 
     visibility: [
-        "//bootable/recovery/minadbd:__subpackages__",
+        "//bootable/recovery:__subpackages__",
         "//system/core/adb:__subpackages__",
     ],
 
@@ -58,6 +58,7 @@ cc_library {
     apex_available: [
         "com.android.adbd",
         "test_com.android.adbd",
+        "//apex_available:platform",
     ],
 }
 

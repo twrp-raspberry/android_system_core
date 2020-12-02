@@ -40,7 +40,7 @@ cc_defaults {
 
     visibility: [
         "//system/core/adb:__subpackages__",
-        "//bootable/recovery/minadbd:__subpackages__",
+        "//bootable/recovery:__subpackages__",
     ],
 
     host_supported: true,
@@ -53,22 +53,24 @@ cc_defaults {
         "libcrypto",
         "libcrypto_utils",
     ],
+
+    apex_available: [
+        "com.android.adbd",
+        "test_com.android.adbd",
+        "//apex_available:platform",
+    ],
 }
 
 cc_library {
     name: "libadb_crypto",
     defaults: ["libadb_crypto_defaults"],
-
-    apex_available: [
-        "com.android.adbd",
-        "test_com.android.adbd",
-    ],
 }
 
 // For running atest (b/147158681)
 cc_library_static {
     name: "libadb_crypto_static",
     defaults: ["libadb_crypto_defaults"],
+    recovery_available: true,
 
     apex_available: [
         "//apex_available:platform",

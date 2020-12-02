@@ -43,7 +43,7 @@ cc_defaults {
         "//system/core/adb:__subpackages__",
 
         // This needs to be visible to minadbd, even though it's removed via exclude_shared_libs.
-        "//bootable/recovery/minadbd:__subpackages__",
+        "//bootable/recovery:__subpackages__",
     ],
 
     stl: "libc++_static",
@@ -59,6 +59,7 @@ cc_library {
     apex_available: [
         "com.android.adbd",
         "test_com.android.adbd",
+        "//apex_available:platform",
     ],
 }
 
