@@ -631,13 +631,13 @@ static Result<void> queue_fs_event(int code, bool userdata_remount) {
     return Error() << "Invalid code: " << code;
 }
 
-static Result<Success> do_install_keyring(const BuiltinArguments& args) {
-    if (fscrypt_install_keyring()) {
+static Result<void> do_install_keyring(const BuiltinArguments& args) {
+    if (FscryptInstallKeyring()) {
         return Error() << "failed to install keyring";
     }
-    property_set("ro.crypto.state", "encrypted");
-    property_set("ro.crypto.type", "file");
-    return Success();
+    android::base::SetProperty("ro.crypto.state", "encrypted");
+    android::base::SetProperty("ro.crypto.type", "file");
+    return {};
 }
 
 static int initial_mount_fstab_return_code = -1;

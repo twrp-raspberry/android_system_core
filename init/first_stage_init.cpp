@@ -94,8 +94,7 @@ void FreeRamdisk(DIR* dir, dev_t dev) {
     }
 }
 
-bool ForceNormalBoot() {
-    std::string cmdline;
+bool ForceNormalBoot(std::string cmdline) {
     android::base::ReadFileToString("/proc/cmdline", &cmdline);
     bool twrp_fastboot = cmdline.find("twrpfastboot=1") == std::string::npos;
     bool normal_boot = cmdline.find("androidboot.force_normal_boot=1") != std::string::npos;
