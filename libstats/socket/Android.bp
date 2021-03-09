@@ -67,6 +67,7 @@ cc_library {
         "com.android.os.statsd",
         "test_com.android.os.statsd",
     ],
+   recovery_available: true
 }
 
 //TODO (b/149842105): Figure out if there is a better solution for this.
