@@ -259,10 +259,6 @@ bool ImageManager::DeleteBackingImage(const std::string& name) {
         return false;
     }
 
-#if defined __ANDROID_RECOVERY__
-    LOG(ERROR) << "Cannot remove images backed by /data in recovery";
-    return false;
-#else
     std::string message;
     auto header_file = GetImageHeaderPath(name);
     if (!SplitFiemap::RemoveSplitFiles(header_file, &message)) {
@@ -276,7 +272,6 @@ bool ImageManager::DeleteBackingImage(const std::string& name) {
         LOG(ERROR) << "Error removing " << status_file << ": " << message;
     }
     return RemoveImageMetadata(metadata_dir_, name);
-#endif
 }
 
 // Create a block device for an image file, using its extents in its
